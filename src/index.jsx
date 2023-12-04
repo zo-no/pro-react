@@ -1,9 +1,10 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
+// import React from "react";
+// import ReactDOM from "react-dom/client";
 import "./index.less";
-import { createElement, render } from './myJSXhandle';
+import { createElement,render  } from './myJSXhandle';
+// import { createElement, render } from './jsxHandle';
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+// const root = ReactDOM.createRoot(document.getElementById("root"));
 
 let styObj = {
     color: 'red',
@@ -22,17 +23,20 @@ let jsxObj = createElement(
   createElement(
       "h2",
     {className: "title",
-     style: styObj,},
+     style: styObj},
     "zono"
   ),
   createElement(
     "div",
-    {className: "box",},
-    "牛",
+    {className: "box"},
+    // "牛",
     createElement("span", null, x),
     createElement("span", null, y)
   )
 );
 
-root.render(jsxObj, document.getElementById('root'));
+console.log(jsxObj);
 
+//有了render方法，就不需要ReactDOM.render了
+// root.render(jsxObj);
+render(jsxObj,document.getElementById("root"));
