@@ -1,9 +1,8 @@
 /*
-@Date		:2023/12/05 16:53:59
+@Date		:2023/12/05 16:58:44
 @Author		:zono
-@Description: 这里先写一次不用react的插槽处理
+@Description:这里还是直接覆盖src文件就行
 */
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import DemoOne from '@/views/DemoOne';
