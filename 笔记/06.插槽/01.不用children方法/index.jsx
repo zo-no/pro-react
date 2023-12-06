@@ -11,9 +11,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <>
         <DemoOne title="REACT好好玩哦" x={10}>
-            <span slot="footer">我是页脚</span>
             <span>哈哈哈哈</span>
-            <span slot="header">我是页眉</span>
         </DemoOne>
 
          <DemoOne title="哇卡卡卡">
