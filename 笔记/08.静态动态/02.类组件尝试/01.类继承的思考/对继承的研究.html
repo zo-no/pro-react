@@ -14,28 +14,30 @@
         constructor() {
           this.x = 1;
         }
-        num = 2; //与构造函数(constructor)中的this.x = 1一样
+        num = 2; //与构造函数(constructor)中的this.x = 1一样,它们都是在构造函数中加入this.xxx
         getXXX = () => {
-          //类公有方法,因为箭头函数的this指向实例对象，
+          //类公有方法,因为箭头函数的this指向实例对象，类似于ES5中直接this.xxx= function(){}
           //所以这个方法也是添加到实例上的,是可以枚举，可配置，可重写的
           console.log(this.x);
         };
+
         getX() {
           //也是类公有方法,
-          //与构造函数(constructor)中的this.getX = function getX(){};和getX = function getX(){};这种写法一样
+          //与构造函数(constructor)中,constructor.prototype.xxx = function(){}
           //但它是给Parent.prototype添加的公共方法，不可枚举，不可配置，不可重写
           console.log(this.x);
           // console.log("getX");
         }
 
         //2.类私有属性,只能通过类名调用
-        static x0 = 3; //类私有属性
+        static x0 = 3; //类私有属性,实现原理一个和下面y0相关
         static getX0() {
+          //类似于直接在function中写function xxx(){}
           console.log(this.x);
         } //类私有方法
       }
-      Parent.y0 = 100; //会变成实例的静态属性,只能通过类名调用
-      Parent.prototype.y = 200; //实例公有属性，但是不会添加到实例上
+      Parent.y0 = 100; //会变成类的静态属性,只能通过类名调用
+      Parent.prototype.y = 200; //实例公有属性，但是不会添加到实例上,
 
       let p = new Parent();
       //模块字符串输出,不能使用单引号和双引号，只能使用反引号

@@ -1,24 +1,18 @@
-/*
-@Date		:2023/12/06 14:43:34
-@Author		:zono
-@Description:尝试一次组件
-*/
+/**
+ * @Date        2023/12/18 13:48:30
+ * @Author      zono
+ * @Description 第一个组件尝试
+ * */
+import React from "react";
+// import ReactDOM from 'react-dom';// 16.8版本之前
+import { createRoot } from "react-dom/client";
+import "./index.css";
 
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import Vote from './components/Vote';
+import App from "./App";
+// 编写第一个组件
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-    <>
-        <Vote title="React其实还是很好学的!" />
-    </>
-);
-
-setTimeout(() => {
-    root.render(
-        <>
-            <Vote title="我是五秒后传递的标题" />
-        </>
-    );
-}, 5000); 
+// ReactDOM.render(<App />, document.getElementById('root'));// 16.8版本之前
+// 为提供的创建一个 React 根container并返回根。
+const root = createRoot(document.getElementById("root"));
+// 根可用于将 React 元素渲染到 DOM 中
+root.render(<App />);
