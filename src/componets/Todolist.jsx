@@ -2,16 +2,11 @@
  * @Date        2023/12/18 14:44:07
  * @Author      zono
  * @Description todo list
- * props就是一个对象，可以用对象的所有方法
- * 事件是冒泡的，所以可以在父组件中监听事件
- * jsx 写法很灵活，但减少重复标签使用，会简洁许多
- * state的更新是异步的，所以不能在同一个函数中连续更新state
- * state只能在函数中使用，不能在函数外使用，可以用reducer解决，或者用redux
- * redux是全局状态管理，reducer是局部状态管理
  * */
+
 import React, { useState, useReducer } from "react";
 import Button from "./Button";
-import "./TodoList.css";
+
 let nextId = 1; // 用于生成id,后面又uuid升级
 /**
  * 单个list
@@ -24,13 +19,18 @@ function List(props) {
   function onClick() {
     setDone(!did);
   }
-
+  console.log(`子组件 ${listID}被渲染了`);
   return (
     <li
-      style={did ? { textDecoration: "line-through", color: "blue" } : null}
+      // style={did ? { textDecoration: "line-through", color: "blue" } : null}
       onClick={onClick}
+      className={`text-base ${
+        did ? "text-blue-500" : "text-black"
+        } bg-slate-600`}
     >
       {listID}-{text}
+      <Button name="修改"></Button>
+      <Button name="删除"></Button>
     </li>
   );
 }
@@ -64,12 +64,14 @@ export default function TodoList(props) {
   });
 
   return (
-    <div className="todo">
-      <h1 style={{ color }}>{title}</h1>
+    <div className>
+      <h1 style={{ color }} className="first-letter:end-96">
+        {title}
+      </h1>
       <input value={name} onChange={(e) => setName(e.target.value)} />
       <ul>{renderList}</ul>
       <Button name="提交" onClick={addNewList}></Button>
-      <Button name="删除" onClick={deleteList}></Button>
+      <Button name="删除最新一个" onClick={deleteList}></Button>
     </div>
   );
 }

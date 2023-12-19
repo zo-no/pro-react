@@ -52,7 +52,7 @@
     "semver": "^7.3.5",
     "source-map-loader": "^3.0.0",
     "style-loader": "^3.3.1",
-    "tailwindcss": "^3.0.2",
+    "styled-components": "^6.1.1",
     "terser-webpack-plugin": "^5.2.5",
     "typescript": "^5.3.3",
     "uuid": "^9.0.1",
@@ -156,5 +156,11 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "prettier": "^3.1.1",
+    "prettier-plugin-tailwindcss": "^0.5.9",
+    "tailwindcss": "^3.3.7"
   }
 }

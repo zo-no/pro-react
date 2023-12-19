@@ -3,10 +3,10 @@
  * @Author      zono
  * @Description 第一个组件尝试
  * */
+import "./index.css";
 import React from "react";
 // import ReactDOM from 'react-dom';// 16.8版本之前
 import { createRoot } from "react-dom/client";
-import "./index.css";
 
 import App from "./App";
 // 编写第一个组件
