@@ -10,11 +10,12 @@
  * */
 import { createContext } from "react";
 
-export const TodoLevel = createContext(1);
+const SetList = createContext(null);
+const SetListState = createContext(null);
+
+export { SetList, SetListState };
 
 export function MyReducer(tasks, action) {
-  // console.log(tasks);
-  // console.log(action);
   switch (action.type) {
     case "add":
       if (tasks[0].text === "空列表") {
@@ -30,6 +31,33 @@ export function MyReducer(tasks, action) {
       } else {
         return tasks.slice(0, -1);
       }
+    }
+    case "deleteById": {
+      if (tasks.length === 1) {
+        //push会改变原数组,导致tasks变成空数组，所以用concat
+        return [{ id: 1, text: "空列表", done: false, level: 3 }];
+      } else {
+        //filter会返回一个新数组，匹配为true的项会被保留
+        return tasks.filter((item) => item.id !== action.payload.id);
+      }
+    }
+    case "updateById": {
+      // 这种写法会导致tasks的引用发生变化，导致子组件不更新
+      // react规定，只有引用发生变化的时候，才会更新组件,只会比较引用地址，不会比较对象的内容
+      // tasks.map((item) => {
+      //   console.log("item" + item.id);
+      //   if (item.id === action.payload.id) {
+      //     item.text = action.payload.text;
+      //   }
+      // });
+      // return tasks;
+      return tasks.map((item) => {
+        if (item.id === action.payload.id) {
+          return { ...item, text: "空列表" };
+        } else {
+          return item;
+        }
+      });
     }
     default:
       return tasks;

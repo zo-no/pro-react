@@ -3,17 +3,14 @@
  * @Author      zono
  * @Description
  * */
-import { useContext } from "react";
-import { TodoLevel } from "./todoContext";
+
 /**
  * 标签
  * 我可以把标签继续封装
  * @param {type}
  * @returns
  * */
-export default function Tag({ did, className }) {
-  const level = useContext(TodoLevel);
-  console.log(level);
+export default function Tag({ did, level, className }) {
   switch (level) {
     case "1":
       return (
@@ -34,6 +31,6 @@ export default function Tag({ did, className }) {
         </span>
       );
     default:
-      return <span className="bg-yellow-600 ">{did ? "ok" : "no"}</span>;
+      return;
   }
 }
