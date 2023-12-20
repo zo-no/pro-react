@@ -4,7 +4,7 @@
  * @Description todo list
  * 完成删除按钮
  * */
-import React, { useState, useReducer, useRef } from "react";
+import React, { useState, useReducer } from "react";
 import Button from "./Button";
 import { SetList, SetListState, MyReducer } from "./todoContext";
 import List from "./list";
@@ -26,7 +26,7 @@ export default function TodoList(props) {
   return (
     <SetListState.Provider value={lists}>
       <SetList.Provider value={dispatch}>
-        <div className={` m-4 rounded-md  bg-green-500 text-center`}>
+        <div className={` m-4 rounded-md  bg-green-500 p-2 text-center`}>
           <h1 className="m-2 p-8 text-lg text-orange-500 first-letter:end-96">
             {title}
           </h1>
