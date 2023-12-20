@@ -13,7 +13,7 @@ export default function Button(porps) {
     <button
       type="submit"
       onClick={onClick}
-      className="m-2 rounded-md bg-yellow-100 p-3 shadow-md hover:bg-yellow-200"
+      className=" m-1 my-3  rounded-md  bg-stone-200 p-1 text-black hover:bg-neutral-600 hover:text-slate-400"
     >
       {children}
       {name}

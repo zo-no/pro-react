@@ -2,10 +2,12 @@
  * @Date        2023/12/18 14:44:07
  * @Author      zono
  * @Description todo list
+ * 完成删除按钮
  * */
-
-import React, { useState, useReducer } from "react";
+import React, { useState, useReducer, useContext } from "react";
 import Button from "./Button";
+import { TodoLevel, MyReducer } from "./todoContext";
+import Tag from "./Tag";
 
 let nextId = 1; // 用于生成id,后面又uuid升级
 /**
@@ -14,22 +16,21 @@ let nextId = 1; // 用于生成id,后面又uuid升级
  * @returns
  * */
 function List(props) {
-  const { text, done, listID } = props;
-  const [did, setDone] = useState(done);
+  const { text, listID } = props;
+  const [did, setDone] = useState(false);
   function onClick() {
     setDone(!did);
   }
-  console.log(`子组件 ${listID}被渲染了`);
   return (
     <li
-      // style={did ? { textDecoration: "line-through", color: "blue" } : null}
       onClick={onClick}
-      className={`text-base ${
-        did ? "text-blue-500" : "text-black"
-        } bg-slate-600`}
+      className={`text-base 
+      ${did ? "bg-yellow-300" : " hover:bg-yellow-200"}
+         m-10 rounded-md p-1`}
     >
+      <Tag did={did} className={" m-3 rounded-lg p-1 text-white"}></Tag>
       {listID}-{text}
-      <Button name="修改"></Button>
+      <Button name="完成"></Button>
       <Button name="删除"></Button>
     </li>
   );
@@ -42,66 +43,57 @@ function List(props) {
  * 记得加key，key不会被传入List中
  * */
 export default function TodoList(props) {
-  const { list, color, title } = props;
+  const { list, title } = props;
   const [name, setName] = useState("zono");
   const [lists, dispatch] = useReducer(MyReducer, list);
+  const [level, setLevel] = useState(3);
 
   function addNewList() {
+    console.log(level);
     dispatch({
       type: "add",
-      payload: { id: nextId++, text: name, done: false },
+      payload: { id: nextId++, text: name, level: level },
     });
   }
 
   function deleteList() {
+    nextId--;
     dispatch({
       type: "delete",
     });
   }
 
-  const renderList = lists.map(({ id, text, done }) => {
-    return <List key={id} listID={id} text={text} done={done}></List>;
-  });
-
   return (
-    <div className>
-      <h1 style={{ color }} className="first-letter:end-96">
+    <div className={` m-4 rounded-md  bg-green-500 text-center`}>
+      <h1 className="m-2 p-8 text-lg text-orange-500 first-letter:end-96">
         {title}
       </h1>
-      <input value={name} onChange={(e) => setName(e.target.value)} />
-      <ul>{renderList}</ul>
+      <div className="mx-10 flex">
+        <input
+          onChange={(e) => {
+            setLevel(e.target.value);
+          }}
+          className="flex-3 m-2 rounded-md text-center"
+        />
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="m-2 flex-1 rounded-md text-center"
+        />
+      </div>
+      <TodoLevel.Provider value={level}>
+        <ul>
+          {lists.map(({ id, text }) => {
+            return (
+              // <TodoLevel.Provider value={level}>
+              <List key={id} listID={id} text={text}></List>
+              // </TodoLevel.Provider>
+            );
+          })}
+        </ul>
+      </TodoLevel.Provider>
       <Button name="提交" onClick={addNewList}></Button>
       <Button name="删除最新一个" onClick={deleteList}></Button>
     </div>
   );
-}
-
-function MyReducer(tasks, action) {
-  // console.log(tasks);
-  // console.log(action);
-  switch (action.type) {
-    case "add":
-      console.log(tasks.length);
-      if (tasks[0].text === "空列表") {
-        tasks.shift();
-        return [action.payload];
-      } else {
-        return [...tasks, action.payload];
-      }
-    case "delete": {
-      console.log(tasks.length);
-      if (tasks.length === 1) {
-        // tasks.slice(0, -1);
-        console.log(tasks);
-        //push会改变原数组,导致tasks变成空数组，所以用concat
-        nextId = 1;
-        return [{ id: 1, text: "空列表", done: false }];
-      } else {
-        nextId--;
-        return tasks.slice(0, -1);
-      }
-    }
-    default:
-      return tasks;
-  }
 }
