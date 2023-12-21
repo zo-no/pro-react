@@ -20,9 +20,22 @@ export function MyReducer(tasks, action) {
     case "add":
       if (tasks[0].text === "空列表") {
         tasks.shift();
-        return [action.payload];
+        return [
+          {
+            id: ++tasks.length,
+            text: action.payload.name,
+            level: action.payload.level,
+          },
+        ];
       } else {
-        return [...tasks, action.payload];
+        return [
+          ...tasks,
+          {
+            id: ++tasks.length,
+            text: action.payload.name,
+            level: action.payload.level,
+          },
+        ];
       }
     case "delete": {
       if (tasks.length === 1) {

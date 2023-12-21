@@ -3,7 +3,7 @@
  * @Author      zono
  * @Description 单个list
  * */
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, forwardRef, useEffect } from "react";
 import Button from "./Button";
 import Tag from "./Tag";
 import { SetList } from "./todoContext";
@@ -12,19 +12,27 @@ import { SetList } from "./todoContext";
  * @param {type}
  * @returns
  * */
-export default function List({ text, listID, level }) {
+export const List = forwardRef(({ text, listID, level }, ref) => {
   const [did, setDone] = useState(false);
   const dispatch = useContext(SetList);
   function onClick() {
     setDone(!did);
   }
-  console.log(`list ${listID} render}`);
+  // useEffect(() => {
+  //   alert("只会挂载执行一次");
+  //   return () => {
+  //     alert("清理");
+  //   };
+  // }, []);
+
+  // console.log(`list ${listID} render}`);
   return (
     <li
       onClick={onClick}
       className={`text-base 
       ${did ? "bg-yellow-300" : " hover:bg-yellow-200"}
          m-10 rounded-md p-1`}
+      ref={ref}
     >
       <Tag
         did={did}
@@ -42,11 +50,11 @@ export default function List({ text, listID, level }) {
         }}
       ></Button>
       <Button
-        name="删除"
+        name="删除（有问题）"
         onClick={() => {
           dispatch({ type: "deleteById", payload: { id: listID } });
         }}
       ></Button>
     </li>
   );
-}
+});
