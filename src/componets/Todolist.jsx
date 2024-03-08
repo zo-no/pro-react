@@ -72,7 +72,6 @@ export default function TodoList(props) {
                     payload: { name: name, level: level },
                   });
                 });
-                scrollToId(lists.length);
               }}
             ></Button>
           </div>

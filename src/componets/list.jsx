@@ -3,12 +3,20 @@
  * @Author      zono
  * @Description 单个list
  * */
-import React, { useState, useContext, forwardRef, useEffect } from "react";
+import React, {
+  useState,
+  useContext,
+  forwardRef,
+  useEffect,
+  memo,
+} from "react";
 import Button from "./Button";
 import Tag from "./Tag";
 import { SetList } from "./todoContext";
 /**
  * 单个list
+ * 因为会传入ref，所以memo不会生效
+ BUG不用把数组的index作为key，因为数组的index会变化
  * @param {type}
  * @returns
  * */
@@ -18,14 +26,12 @@ export const List = forwardRef(({ text, listID, level }, ref) => {
   function onClick() {
     setDone(!did);
   }
-  // useEffect(() => {
-  //   alert("只会挂载执行一次");
-  //   return () => {
-  //     alert("清理");
-  //   };
-  // }, []);
+  useEffect(() => {
+    console.log("ref被创建了");
+    console.log(ref.current);
+  }, [ref]);
 
-  // console.log(`list ${listID} render}`);
+  console.log(`list ${listID} render`);
   return (
     <li
       onClick={onClick}
