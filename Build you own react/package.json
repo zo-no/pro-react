@@ -12,6 +12,7 @@
   "devDependencies": {
     "typescript": "3.3.3"
   },
+
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

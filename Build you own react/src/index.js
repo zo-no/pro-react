@@ -1,25 +1,34 @@
+/**
+ * @description 将对象转换为虚拟DOM
+ * */
 function createElement(type, props, ...children) {
   return {
     type,
     props: {
       ...props,
-      children: children.map(child =>
+      children: children.map((child) =>
         typeof child === "object" ? child : createTextElement(child)
-      )
-    }
+      ),
+    },
   };
 }
 
+/**
+ * @description 如果是文本就单独处理
+ * */
 function createTextElement(text) {
   return {
     type: "TEXT_ELEMENT",
     props: {
       nodeValue: text,
-      children: []
-    }
+      children: [],
+    },
   };
 }
 
+/**
+ * @description 创建真实DOM
+ * */
 function createDom(fiber) {
   const dom =
     fiber.type == "TEXT_ELEMENT"
@@ -31,16 +40,16 @@ function createDom(fiber) {
   return dom;
 }
 
-const isEvent = key => key.startsWith("on");
-const isProperty = key => key !== "children" && !isEvent(key);
-const isNew = (prev, next) => key => prev[key] !== next[key];
-const isGone = (prev, next) => key => !(key in next);
+const isEvent = (key) => key.startsWith("on");
+const isProperty = (key) => key !== "children" && !isEvent(key);
+const isNew = (prev, next) => (key) => prev[key] !== next[key];
+const isGone = (prev, next) => (key) => !(key in next);
 function updateDom(dom, prevProps, nextProps) {
   //Remove old or changed event listeners
   Object.keys(prevProps)
     .filter(isEvent)
-    .filter(key => !(key in nextProps) || isNew(prevProps, nextProps)(key))
-    .forEach(name => {
+    .filter((key) => !(key in nextProps) || isNew(prevProps, nextProps)(key))
+    .forEach((name) => {
       const eventType = name.toLowerCase().substring(2);
       dom.removeEventListener(eventType, prevProps[name]);
     });
@@ -49,7 +58,7 @@ function updateDom(dom, prevProps, nextProps) {
   Object.keys(prevProps)
     .filter(isProperty)
     .filter(isGone(prevProps, nextProps))
-    .forEach(name => {
+    .forEach((name) => {
       dom[name] = "";
     });
 
@@ -57,7 +66,7 @@ function updateDom(dom, prevProps, nextProps) {
   Object.keys(nextProps)
     .filter(isProperty)
     .filter(isNew(prevProps, nextProps))
-    .forEach(name => {
+    .forEach((name) => {
       dom[name] = nextProps[name];
     });
 
@@ -65,16 +74,20 @@ function updateDom(dom, prevProps, nextProps) {
   Object.keys(nextProps)
     .filter(isEvent)
     .filter(isNew(prevProps, nextProps))
-    .forEach(name => {
+    .forEach((name) => {
       const eventType = name.toLowerCase().substring(2);
       dom.addEventListener(eventType, nextProps[name]);
     });
 }
 
+
+/**
+* @description 提交根DOM，并提交子DOM 
+* */
 function commitRoot() {
   deletions.forEach(commitWork);
   commitWork(wipRoot.child);
-  currentRoot = wipRoot;
+  currentRoot = wipRoot;//记录新的当前根
   wipRoot = null;
 }
 
@@ -109,39 +122,54 @@ function commitDeletion(fiber, domParent) {
   }
 }
 
+/**
+ * @description 渲染函数
+ * @param {dom} container --当前容器
+ * @param {dom} element -- 更新内容
+ * */
 function render(element, container) {
   wipRoot = {
-    dom: container,
+    dom: container, //当前内容
     props: {
-      children: [element]
+      children: [element], //待更新内容
     },
-    alternate: currentRoot
+    alternate: currentRoot,
   };
   deletions = [];
   nextUnitOfWork = wipRoot;
 }
 
 let nextUnitOfWork = null;
-let currentRoot = null;
-let wipRoot = null;
+let currentRoot = null;//最后提交给 DOM 的 fiber 树的引用
+let wipRoot = null; //对根的追踪，工作根（work in progress root）
 let deletions = null;
 
+/**
+ * @description 管理循环渲染，在浏览器空闲时会调用
+ * @param {IdleDeadline} deadline --判断用户代理预计还剩余多少闲置时间
+ * @see https://developer.mozilla.org/zh-CN/docs/Web/API/IdleDeadline
+ * */
 function workLoop(deadline) {
-  let shouldYield = false;
+  let shouldYield = false; //是否停止
+  //有执行待执行单元，且不停止时进行渲染
   while (nextUnitOfWork && !shouldYield) {
     nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
     shouldYield = deadline.timeRemaining() < 1;
   }
 
+  //执行单元消费完毕，且存在工作根
   if (!nextUnitOfWork && wipRoot) {
-    commitRoot();
+    commitRoot();//上传代码
   }
 
   requestIdleCallback(workLoop);
 }
 
-requestIdleCallback(workLoop);
+requestIdleCallback(workLoop); //整个react渲染的启动器
 
+/**
+ * @description 运行一个执行单元并找到下一个执行单元
+ * */
 function performUnitOfWork(fiber) {
   const isFunctionComponent = fiber.type instanceof Function;
   if (isFunctionComponent) {
@@ -163,7 +191,9 @@ function performUnitOfWork(fiber) {
 
 let wipFiber = null;
 let hookIndex = null;
-
+/**
+ * @description
+ * */
 function updateFunctionComponent(fiber) {
   wipFiber = fiber;
   hookIndex = 0;
@@ -179,20 +209,21 @@ function useState(initial) {
     wipFiber.alternate.hooks[hookIndex];
   const hook = {
     state: oldHook ? oldHook.state : initial,
-    queue: []
+    queue: [],
   };
 
   const actions = oldHook ? oldHook.queue : [];
-  actions.forEach(action => {
+  actions.forEach((action) => {
     hook.state = action(hook.state);
   });
 
-  const setState = action => {
+  
+  const setState = (action) => {
     hook.queue.push(action);
     wipRoot = {
       dom: currentRoot.dom,
       props: currentRoot.props,
-      alternate: currentRoot
+      alternate: currentRoot,
     };
     nextUnitOfWork = wipRoot;
     deletions = [];
@@ -203,6 +234,9 @@ function useState(initial) {
   return [hook.state, setState];
 }
 
+/**
+ * @Description 更新普通组件
+ * */
 function updateHostComponent(fiber) {
   if (!fiber.dom) {
     fiber.dom = createDom(fiber);
@@ -228,7 +262,7 @@ function reconcileChildren(wipFiber, elements) {
         dom: oldFiber.dom,
         parent: wipFiber,
         alternate: oldFiber,
-        effectTag: "UPDATE"
+        effectTag: "UPDATE",
       };
     }
     if (element && !sameType) {
@@ -238,7 +272,7 @@ function reconcileChildren(wipFiber, elements) {
         dom: null,
         parent: wipFiber,
         alternate: null,
-        effectTag: "PLACEMENT"
+        effectTag: "PLACEMENT",
       };
     }
     if (oldFiber && !sameType) {
@@ -264,14 +298,16 @@ function reconcileChildren(wipFiber, elements) {
 const Didact = {
   createElement,
   render,
-  useState
+  useState,
 };
 
+// -----------------------------------------------------------------------
+//运行的代码
 /** @jsx Didact.createElement */
 function Counter() {
   const [state, setState] = Didact.useState(1);
   return (
-    <h1 onClick={() => setState(c => c + 1)} style="user-select: none">
+    <h1 onClick={() => setState((c) => c + 1)} style="user-select: none">
       Count: {state}
     </h1>
   );
